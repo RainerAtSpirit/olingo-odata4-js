@@ -1,0 +1,66 @@
+﻿<!--
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+ -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>odatajs side-by-side test (V3 & V4)</title>
+    <!--<script type="text/javascript" src="../../demo/scripts/datajs-1.1.2.js"></script>-->
+    <script type="text/javascript" src="http://download-codeplex.sec.s-msft.com/Download/Release?ProjectName=datajs&DownloadId=784667&FileTime=130354527569270000&Build=20928"></script>
+    <script type="text/javascript" src="../../_build/lib/odatajs-latest.js"></script>
+    https://datajs.codeplex.com/downloads/get/784666
+</head>
+<body>
+    <h3>
+        Test V3 and V4 running side by side...</h3>
+    <div id="msg">
+    </div>
+    <script type="text/javascript">
+
+        var headers = { "Content-Type": "application/json", Accept: "application/json" };
+        var request = {
+            requestUri: "../endpoints/FoodStoreDataServiceV4.svc/Foods",
+            method: "GET",
+            headers: headers,
+            data: null
+        };
+
+        OData.request(request, function (data, response) {
+            document.getElementById('msg').innerHTML += ("<div>datajs V3 testing failed.</div>");
+        }, function (err) {
+            if ((err.response.statusCode == '200') && (err.response.body.indexOf('}', err.response.body.length - 1) == err.response.body.length - 1) && err.response.headers['Content-Type'] == "application/json;odata.metadata=minimal;odata.streaming=true;IEEE754Compatible=false;charset=utf-8") {
+                document.getElementById('msg').innerHTML += ("<div>datajs V3 testing pass!</div>");
+            } else {
+                document.getElementById('msg').innerHTML += ("<div>datajs V3 testing failed.</div>");
+            }
+        });
+
+        odatajs.oData.request(request, function (data, response) {
+            if ((response.statusCode == '200') && (response.body.indexOf('}', response.body.length - 1) == response.body.length - 1) && response.headers['Content-Type'] == "application/json;odata.metadata=minimal;odata.streaming=true;IEEE754Compatible=false;charset=utf-8") {
+                document.getElementById('msg').innerHTML += ("<div>odatajs V4 testing pass!</div>");
+            } else {
+                document.getElementById('msg').innerHTML += ("<div>odatajs V4 testing failed.</div>");
+            }
+        }, function (err) {
+            document.getElementById('msg').innerHTML += ("<div>odatajs V4 testing failed.</div>");
+        });
+    </script>
+</body>
+</html>
